@@ -1,2 +1,5 @@
 # Build directory
 build
+
+# LSP compile commands
+compile_commands.json
