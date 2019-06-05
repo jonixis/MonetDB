@@ -463,6 +463,9 @@ scanner_init_keywords(void)
 	keywords_insert("MULTILINESTRINGZM", GEOMETRYSUBTYPE);
 	keywords_insert("MULTIPOLYGONZM", GEOMETRYSUBTYPE);
 	keywords_insert("GEOMETRYCOLLECTIONZM", GEOMETRYSUBTYPE);
+
+  /* keywords for matrix operations*/
+  keywords_insert("MUL", MUL);
 }
 
 #define find_keyword_bs(lc, s) find_keyword(lc->rs->buf+lc->rs->pos+s)

@@ -610,7 +610,10 @@ SQLCODE SQLERROR UNDER WHENEVER
 %token AS TRIGGER OF BEFORE AFTER ROW STATEMENT sqlNEW OLD EACH REFERENCING
 %token OVER PARTITION CURRENT EXCLUDE FOLLOWING PRECEDING OTHERS TIES RANGE UNBOUNDED
 
-%token X_BODY 
+%token X_BODY
+
+/* SQL Matrix Tokens*/
+%token MUL
 %%
 
 sqlstmt:
@@ -2839,6 +2842,11 @@ joined_table:
 	  append_symbol(l, $5);
 	  append_symbol(l, NULL);
 	  $$ = _symbol_create_list( SQL_JOIN, l); }
+ |  MUL table_ref
+ {  dlist *l = L();
+	  append_symbol(l, $2);
+	  append_symbol(l, $2);
+	  $$ = _symbol_create_list( SQL_CROSS, l); }
   ;
 
 join_type:
