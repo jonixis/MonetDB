@@ -170,7 +170,8 @@ typedef enum tokens {
 	SQL_XMLQUERY,
 	SQL_XMLTEXT,
 	SQL_XMLVALIDATE,
-	SQL_XMLNAMESPACES
+	SQL_XMLNAMESPACES,
+  SQL_MUL
 } tokens;
 
 typedef enum jt {

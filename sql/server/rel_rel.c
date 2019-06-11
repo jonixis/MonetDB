@@ -373,6 +373,20 @@ rel_crossproduct(sql_allocator *sa, sql_rel *l, sql_rel *r, operator_type join)
 }
 
 sql_rel *
+rel_multiplication(sql_allocator *sa, sql_rel *l, sql_rel *r, operator_type join)
+{
+  sql_rel *rel = rel_create(sa);
+
+  rel->l = l;
+  rel->r = r;
+  rel->op = join;
+  rel->exps = NULL;
+  rel->card = CARD_MULTI;
+  rel->nrcols = l->nrcols + r->nrcols;
+  return rel;
+}
+
+sql_rel *
 rel_topn(sql_allocator *sa, sql_rel *l, list *exps )
 {
 	sql_rel *rel = rel_create(sa);
