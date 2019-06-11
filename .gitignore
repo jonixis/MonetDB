@@ -6,3 +6,6 @@ compile_commands.json
 
 # CCLS cache
 .ccls-cache
+
+# Emacs org files
+*.org

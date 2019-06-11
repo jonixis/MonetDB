@@ -212,6 +212,7 @@ static sql_rel * rel_setquery(mvc *sql, sql_rel *rel, symbol *sq);
 static sql_rel * rel_joinquery(mvc *sql, sql_rel *rel, symbol *sq);
 static sql_rel * rel_crossquery(mvc *sql, sql_rel *rel, symbol *q);
 static sql_rel * rel_unionjoinquery(mvc *sql, sql_rel *rel, symbol *sq);
+static sql_rel * rel_mulquery(mvc *sql, sql_rel *rel, symbol *q);
 
 static sql_rel *
 rel_table_optname(mvc *sql, sql_rel *sq, symbol *optname)
@@ -353,6 +354,14 @@ query_exp_optname(mvc *sql, sql_rel *r, symbol *q)
 			return NULL;
 		return rel_table_optname(sql, tq, q->data.lval->t->data.sym);
 	}
+  case SQL_MUL:
+  {
+    sql_rel *tq = rel_mulquery(sql, r, q);
+
+    if (!tq)
+      return NULL;
+    return rel_table_optname(sql, tq, q->data.lval->t->data.sym);
+  }
 	default:
 		(void) sql_error(sql, 02, "case %d %s\n", q->token, token2string(q->token));
 	}
@@ -5070,6 +5079,20 @@ rel_unionjoinquery(mvc *sql, sql_rel *rel, symbol *q)
 	rel->exps = rel_projections(sql, rel, NULL, 0, 1);
 	if (!all)
 		rel = rel_distinct(rel);
+	return rel;
+}
+
+static sql_rel *
+rel_mulquery(mvc *sql, sql_rel *rel, symbol *q)
+{
+	dnode *n = q->data.lval->h;
+	symbol *tab1 = n->data.sym;
+  sql_rel *t1 = table_ref(sql, rel, tab1);
+
+	if (!t1)
+		return NULL;
+
+	rel = rel_multiplication(sql->sa, t1, t1, op_join);
 	return rel;
 }
 
