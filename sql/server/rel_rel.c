@@ -373,16 +373,18 @@ rel_crossproduct(sql_allocator *sa, sql_rel *l, sql_rel *r, operator_type join)
 }
 
 sql_rel *
-rel_multiplication(sql_allocator *sa, sql_rel *l, sql_rel *r, operator_type join)
+rel_selfmultiplication(sql_allocator *sa, sql_rel *l, operator_type mul)
 {
   sql_rel *rel = rel_create(sa);
 
   rel->l = l;
-  rel->r = r;
-  rel->op = join;
+  // TODO necessary for cross join testing
+  rel->r = l;
+  rel->op = mul;
   rel->exps = NULL;
   rel->card = CARD_MULTI;
-  rel->nrcols = l->nrcols + r->nrcols;
+  // TODO addition only for testing with cross join operation
+  rel->nrcols = l->nrcols + l->nrcols;
   return rel;
 }
 
