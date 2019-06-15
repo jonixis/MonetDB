@@ -5093,7 +5093,7 @@ rel_selfmulquery(mvc *sql, sql_rel *rel, symbol *q)
 		return NULL;
 
   // TODO pass op_multiplication instead of join
-	rel = rel_selfmultiplication(sql->sa, t1, op_join);
+	rel = rel_selfmultiplication(sql->sa, t1, op_multiplication);
 	return rel;
 }
 

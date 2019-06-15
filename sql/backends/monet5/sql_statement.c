@@ -880,6 +880,21 @@ stmt_join(sql_allocator *sa, stmt *op1, stmt *op2, comp_type cmptype)
 }
 
 stmt *
+stmt_multiplication(sql_allocator *sa, stmt *op1, stmt *op2, comp_type cmptype)
+{
+  // TODO Change type to st_multiplication
+	stmt *s = stmt_create(sa, st_multiplication);
+
+	s->op1 = op1;
+	s->op2 = op2;
+	s->flag = cmptype;
+	s->key = 0;
+  // TODO for multiplication nrcols shoudl be 1
+	s->nrcols = 2;
+	return s;
+}
+
+stmt *
 stmt_project(sql_allocator *sa, stmt *op1, stmt *op2)
 {
 	return stmt_join(sa, op1, op2, cmp_project);

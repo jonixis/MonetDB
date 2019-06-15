@@ -66,6 +66,8 @@ typedef enum stmt_type {
 	st_join2,
 	st_joinN,
 
+  st_multiplication,
+
 	st_export,
 	st_append,
 	st_table_clear,
@@ -186,6 +188,8 @@ extern stmt *stmt_join(sql_allocator *sa, stmt *op1, stmt *op2, comp_type cmptyp
 extern stmt *stmt_join2(sql_allocator *sa, stmt *l, stmt *ra, stmt *rb, int cmp, int swapped);
 /* generic join operator, with a left and right statement list */
 extern stmt *stmt_genjoin(sql_allocator *sa, stmt *l, stmt *r, sql_subfunc *op, int swapped);
+
+extern stmt *stmt_multiplication(sql_allocator *sa, stmt *op1, stmt *op2, comp_type cmptype);
 
 extern stmt *stmt_project(sql_allocator *sa, stmt *op1, stmt *op2);
 extern stmt *stmt_project_delta(sql_allocator *sa, stmt *col, stmt *upd, stmt *ins);

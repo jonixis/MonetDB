@@ -55,6 +55,7 @@ find_basetables( sql_rel *rel, list *tables )
 	}
 	case op_table:
 		break;
+  case op_multiplication:
 	case op_join: 
 	case op_left: 
 	case op_right: 
