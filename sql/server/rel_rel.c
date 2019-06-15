@@ -116,6 +116,7 @@ rel_copy( sql_allocator *sa, sql_rel *i )
 		if (i->r)
 			rel->r = (i->r)?list_dup(i->r, (fdup)NULL):NULL;
 		break;
+  case op_multiplication:
 	case op_join:
 	case op_left:
 	case op_right:
@@ -170,6 +171,7 @@ rel_bind_column_(mvc *sql, sql_rel **p, sql_rel *rel, const char *cname )
 	int ambiguous = 0;
 	sql_rel *l = NULL, *r = NULL;
 	switch(rel->op) {
+  case op_multiplication:
 	case op_join:
 	case op_left:
 	case op_right:
@@ -753,6 +755,7 @@ rel_projections(mvc *sql, sql_rel *rel, const char *tname, int settname, int int
 		return new_exp_list(sql->sa);
 
 	switch(rel->op) {
+  case op_multiplication:
 	case op_join:
 	case op_left:
 	case op_right:
@@ -825,6 +828,7 @@ rel_bind_path_(sql_rel *rel, sql_exp *e, list *path )
 	int found = 0;
 
 	switch (rel->op) {
+  case op_multiplication:
 	case op_join:
 	case op_left:
 	case op_right:
