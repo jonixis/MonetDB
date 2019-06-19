@@ -212,7 +212,7 @@ static sql_rel * rel_setquery(mvc *sql, sql_rel *rel, symbol *sq);
 static sql_rel * rel_joinquery(mvc *sql, sql_rel *rel, symbol *sq);
 static sql_rel * rel_crossquery(mvc *sql, sql_rel *rel, symbol *q);
 static sql_rel * rel_unionjoinquery(mvc *sql, sql_rel *rel, symbol *sq);
-static sql_rel * rel_selfmulquery(mvc *sql, sql_rel *rel, symbol *q);
+static sql_rel * rel_mulquery(mvc *sql, sql_rel *rel, symbol *q);
 
 static sql_rel *
 rel_table_optname(mvc *sql, sql_rel *sq, symbol *optname)
@@ -356,7 +356,7 @@ query_exp_optname(mvc *sql, sql_rel *r, symbol *q)
 	}
   case SQL_MUL:
   {
-    sql_rel *tq = rel_selfmulquery(sql, r, q);
+    sql_rel *tq = rel_mulquery(sql, r, q);
 
     if (!tq)
       return NULL;
@@ -5083,7 +5083,7 @@ rel_unionjoinquery(mvc *sql, sql_rel *rel, symbol *q)
 }
 
 static sql_rel *
-rel_selfmulquery(mvc *sql, sql_rel *rel, symbol *q)
+rel_mulquery(mvc *sql, sql_rel *rel, symbol *q)
 {
 	dnode *n = q->data.lval->h;
 	symbol *tab1 = n->data.sym;
@@ -5092,8 +5092,7 @@ rel_selfmulquery(mvc *sql, sql_rel *rel, symbol *q)
 	if (!t1)
 		return NULL;
 
-  // TODO pass op_multiplication instead of join
-	rel = rel_selfmultiplication(sql->sa, t1, op_multiplication);
+	rel = rel_multiplication(sql->sa, t1, op_multiplication);
 	return rel;
 }
 

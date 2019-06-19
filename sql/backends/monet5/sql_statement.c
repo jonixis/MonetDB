@@ -324,6 +324,7 @@ stmt_deps(list *dep_list, stmt *s, int depend_type, int dir)
 
 			case st_group:
 
+      case st_multiplication:
 			case st_uselect:
 			case st_uselect2:
 				if (s->op1)
@@ -880,17 +881,14 @@ stmt_join(sql_allocator *sa, stmt *op1, stmt *op2, comp_type cmptype)
 }
 
 stmt *
-stmt_multiplication(sql_allocator *sa, stmt *op1, stmt *op2, comp_type cmptype)
+stmt_multiplication(sql_allocator *sa, stmt *op1)
 {
-  // TODO Change type to st_multiplication
 	stmt *s = stmt_create(sa, st_multiplication);
 
 	s->op1 = op1;
-	s->op2 = op2;
-	s->flag = cmptype;
+	s->op2 = NULL;
 	s->key = 0;
-  // TODO for multiplication nrcols shoudl be 1
-	s->nrcols = 2;
+	s->nrcols = 1;
 	return s;
 }
 
@@ -1216,6 +1214,7 @@ tail_type(stmt *st)
 	case st_const:
 		return tail_type(st->op2);
 
+  case st_multiplication:
 	case st_uselect:
 	case st_uselect2:
 	case st_limit:
@@ -1300,6 +1299,7 @@ stmt_has_null(stmt *s)
 	switch (s->type) {
 	case st_aggr:
 	case st_Nop:
+  case st_multiplication:
 	case st_uselect:
 	case st_uselect2:
 	case st_atom:
@@ -1372,6 +1372,7 @@ _column_name(sql_allocator *sa, stmt *st)
 	case st_result:
 	case st_append:
 	case st_gen_group:
+  case st_multiplication:
 	case st_uselect:
 	case st_uselect2:
 	case st_limit:
@@ -1443,6 +1444,7 @@ _table_name(sql_allocator *sa, stmt *st)
 	case st_group:
 	case st_result:
 	case st_gen_group:
+  case st_multiplication:
 	case st_uselect:
 	case st_uselect2:
 	case st_limit:
@@ -1498,6 +1500,7 @@ schema_name(sql_allocator *sa, stmt *st)
 	case st_result:
 	case st_append:
 	case st_gen_group:
+  case st_multiplication:
 	case st_uselect:
 	case st_uselect2:
 	case st_limit:

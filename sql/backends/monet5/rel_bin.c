@@ -1334,8 +1334,6 @@ rel2bin_args( mvc *sql, sql_rel *rel, list *args)
 	case op_table:
 		break;
 
-  case op_multiplication:
-
 	case op_join: 
 	case op_left: 
 	case op_right: 
@@ -1354,6 +1352,7 @@ rel2bin_args( mvc *sql, sql_rel *rel, list *args)
 	case op_groupby: 
 		if (rel->r) 
 			args = exps2bin_args(sql, rel->r, args);
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_topn: 
@@ -1637,21 +1636,19 @@ rel2bin_multiplication(mvc *sql, sql_rel *rel, list *refs)
 {
   list *stmts = NULL;
   stmt *left = NULL;
-  stmt *right = NULL;
   stmt *multiplication = NULL;
   stmt *l = NULL;
-  stmt *r = NULL;
 
   left = subrel_bin(sql, rel->l, refs);
-  right = subrel_bin(sql, rel->r, refs);
 
-  assert(left && right);
+  assert(left);
 
-  l = bin_first_column(sql->sa, left);
-  r = bin_first_column(sql->sa, right);
+  node *n = left->op4.lval->h;
+  stmt *c = n->data;
+  l = column(sql->sa, c);
 
   stmts = sa_list(sql->sa);
-  multiplication = stmt_multiplication(sql->sa, l, r, cmp_all);
+  multiplication = stmt_multiplication(sql->sa, l);
   list_append(stmts, multiplication);
 
   return stmt_list(sql->sa, stmts);
@@ -4594,10 +4591,6 @@ subrel_bin(mvc *sql, sql_rel *rel, list *refs)
 		s = rel2bin_table(sql, rel, refs);
 		sql->type = Q_TABLE;
 		break;
-  case op_multiplication:
-    s = rel2bin_multiplication(sql, rel, refs);
-    sql->type = Q_TABLE;
-    break;
   case op_join:
 	case op_left: 
 	case op_right: 
@@ -4623,7 +4616,11 @@ subrel_bin(mvc *sql, sql_rel *rel, list *refs)
 	case op_inter: 
 		s = rel2bin_inter(sql, rel, refs);
 		sql->type = Q_TABLE;
-		break;
+    break;
+  case op_multiplication:
+    s = rel2bin_multiplication(sql, rel, refs);
+    sql->type = Q_TABLE;
+    break;
 	case op_project:
 		s = rel2bin_project(sql, rel, refs, NULL);
 		sql->type = Q_TABLE;

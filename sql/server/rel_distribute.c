@@ -32,8 +32,6 @@ has_remote_or_replica( sql_rel *rel )
 	case op_table:
 		break;
 
-  case op_multiplication:
-
 	case op_join: 
 	case op_left: 
 	case op_right: 
@@ -50,6 +48,7 @@ has_remote_or_replica( sql_rel *rel )
 		    has_remote_or_replica( rel->r ))
 			return 1;
 		break;
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_groupby: 
@@ -147,8 +146,6 @@ replica(mvc *sql, sql_rel *rel, char *uri)
 	case op_table:
 		break;
 
-  case op_multiplication:
-
 	case op_join:
 	case op_left: 
 	case op_right: 
@@ -165,6 +162,7 @@ replica(mvc *sql, sql_rel *rel, char *uri)
 		rel->r = replica(sql, rel->r, uri);
 		break;
 	case op_project:
+  case op_multiplication:
 	case op_select: 
 	case op_groupby: 
 	case op_topn: 
@@ -223,9 +221,7 @@ distribute(mvc *sql, sql_rel *rel)
 	case op_table:
 		break;
 
-  case op_multiplication:
-
-	case op_join: 
+	case op_join:
 	case op_left: 
 	case op_right: 
 	case op_full: 
@@ -256,6 +252,7 @@ distribute(mvc *sql, sql_rel *rel)
 			rel->p = pl;
 		}
 		break;
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_groupby: 
@@ -294,9 +291,7 @@ rel_remote_func(mvc *sql, sql_rel *rel)
 	case op_table:
 		break;
 
-  case op_multiplication:
-
-	case op_join: 
+	case op_join:
 	case op_left: 
 	case op_right: 
 	case op_full: 
@@ -311,6 +306,7 @@ rel_remote_func(mvc *sql, sql_rel *rel)
 		rel->l = rel_remote_func(sql, rel->l);
 		rel->r = rel_remote_func(sql, rel->r);
 		break;
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_groupby: 

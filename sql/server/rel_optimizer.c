@@ -101,8 +101,7 @@ name_find_column( sql_rel *rel, char *rname, char *name, int pnr, sql_rel **bt )
 		if (is_updateble(rel))
 			return name_find_column( rel->l, rname, name, pnr, bt);
 		return NULL;
-  case op_multiplication:
-	case op_join: 
+	case op_join:
 	case op_left: 
 	case op_right: 
 	case op_full: 
@@ -131,6 +130,7 @@ name_find_column( sql_rel *rel, char *rname, char *name, int pnr, sql_rel **bt )
 		}
 		return NULL;
 
+  case op_multiplication:
 	case op_project:
 	case op_groupby:
 		if (!rel->exps)
@@ -227,8 +227,6 @@ rel_properties(mvc *sql, global_props *gp, sql_rel *rel)
 			rel_properties(sql, gp, rel->l);
 		break;
 
-  case op_multiplication:
-
   case op_join:
 	case op_left: 
 	case op_right: 
@@ -244,6 +242,7 @@ rel_properties(mvc *sql, global_props *gp, sql_rel *rel)
 		rel_properties(sql, gp, rel->l);
 		rel_properties(sql, gp, rel->r);
 		break;
+  case op_multiplication:
 	case op_project:
 	case op_select:
 	case op_groupby:
@@ -268,8 +267,6 @@ rel_properties(mvc *sql, global_props *gp, sql_rel *rel)
 			rel->p = prop_create(sql->sa, PROP_COUNT, rel->p);
 		break;
 
-  case op_multiplication:
-
   case op_join:
 	case op_left: 
 	case op_right: 
@@ -284,6 +281,7 @@ rel_properties(mvc *sql, global_props *gp, sql_rel *rel)
 	case op_except: 
 		break;
 
+  case op_multiplication:
 	case op_project:
 	case op_groupby:
 	case op_topn:
@@ -1058,8 +1056,7 @@ rel_join_order(mvc *sql, sql_rel *rel)
 	case op_basetable:
 	case op_table:
 		break;
-  case op_multiplication:
-	case op_join: 
+	case op_join:
 	case op_left: 
 	case op_right: 
 	case op_full: 
@@ -1075,6 +1072,7 @@ rel_join_order(mvc *sql, sql_rel *rel)
 		rel->l = rel_join_order(sql, rel->l);
 		rel->r = rel_join_order(sql, rel->r);
 		break;
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_groupby: 
@@ -5377,6 +5375,7 @@ rel_mark_used(mvc *sql, sql_rel *rel, int proj)
 			rel_mark_used(sql, rel, proj);
 			break;
 		}
+  case op_multiplication:
 	case op_project:
 	case op_groupby: 
 		if (proj && rel->l) {
@@ -5438,8 +5437,6 @@ rel_mark_used(mvc *sql, sql_rel *rel, int proj)
 		//	rel_mark_used(sql, rel->r, 1);
 		}
 		break;
-
-  case op_multiplication:
 
 	case op_join: 
 	case op_left: 
@@ -5511,6 +5508,7 @@ rel_remove_unused(mvc *sql, sql_rel *rel)
 			rel->l = rel_remove_unused(sql, rel->l);
 		return rel;
 
+  case op_multiplication:
 	case op_project:
 	case op_groupby: 
 	case op_apply: 
@@ -5551,8 +5549,6 @@ rel_remove_unused(mvc *sql, sql_rel *rel)
 	case op_delete:
 
 	case op_select: 
-
-  case op_multiplication:
 
   case op_join:
 	case op_left: 
@@ -5597,7 +5593,8 @@ rel_dce_down(mvc *sql, sql_rel *rel, int skip_proj)
 		return rel;
 
 	case op_topn: 
-	case op_sample: 
+	case op_sample:
+  case op_multiplication:
 	case op_project:
 	case op_groupby: 
 
@@ -5624,8 +5621,6 @@ rel_dce_down(mvc *sql, sql_rel *rel, int skip_proj)
 		if (rel->l)
 			rel->l = rel_dce_down(sql, rel->l, 0);
 		return rel;
-
-  case op_multiplication:
 
   case op_join:
 	case op_left: 
@@ -5713,14 +5708,12 @@ rel_add_projects(mvc *sql, sql_rel *rel)
 	case op_topn: 
 	case op_sample: 
 	case op_project:
+  case op_multiplication:
 	case op_groupby: 
 	case op_select: 
 		if (rel->l)
 			rel->l = rel_add_projects(sql, rel->l);
 		return rel;
-
-
-  case op_multiplication:
 
   case op_join:
 	case op_left: 
@@ -7140,8 +7133,6 @@ rel_uses_exps(sql_rel *rel, list *exps )
 	case op_table:
 		return 0;
 
-  case op_multiplication:
-
   case op_join:
 	case op_left:
 	case op_right:
@@ -7154,7 +7145,8 @@ rel_uses_exps(sql_rel *rel, list *exps )
 	case op_union: 
 	case op_inter: 
 	case op_except: 
-		return (rel_uses_exps(rel->l, exps) ||	rel_uses_exps(rel->r, exps)); 
+		return (rel_uses_exps(rel->l, exps) ||	rel_uses_exps(rel->r, exps));
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_groupby: 
@@ -7315,6 +7307,7 @@ rel_rename(mvc *sql, sql_rel *rel, list *aliases)
 		nrel->l = rel_rename(sql, rel->l, aliases);
 		nrel->exps = exps_rename_up(sql, rel->exps, aliases);
 		return nrel;
+  case op_multiplication:
 	case op_project:
 	case op_groupby: 
 		naliases = new_exp_list(sql->sa);
@@ -7328,8 +7321,6 @@ rel_rename(mvc *sql, sql_rel *rel, list *aliases)
 		if (rel->r)
 			nrel->r = rel_rename(sql, rel->r, aliases);
 		return nrel;
-
-  case op_multiplication:
 
 	case op_join:
 	case op_left:
@@ -7377,6 +7368,7 @@ rel_apply_rename(mvc *sql, sql_rel *rel)
 		if (rel->l)
 			rel->l = rel_apply_rename(sql, rel->l);
 		return rel;
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_groupby: 
@@ -7389,8 +7381,6 @@ rel_apply_rename(mvc *sql, sql_rel *rel)
 		if (rel->r)
 			rel->r = rel_apply_rename(sql, rel->r);
 		return rel;
-
-  case op_multiplication:
 
 	case op_join:
 	case op_left:
@@ -7748,8 +7738,6 @@ rewrite(mvc *sql, sql_rel *rel, rewrite_fptr rewriter, int *has_changes)
 	case op_table:
 		break;
 
-  case op_multiplication:
-
 	case op_join: 
 	case op_left: 
 	case op_right: 
@@ -7765,6 +7753,7 @@ rewrite(mvc *sql, sql_rel *rel, rewrite_fptr rewriter, int *has_changes)
 		rel->l = rewrite(sql, rel->l, rewriter, has_changes);
 		rel->r = rewrite(sql, rel->r, rewriter, has_changes);
 		break;
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_groupby: 
@@ -7808,9 +7797,7 @@ rewrite_topdown(mvc *sql, sql_rel *rel, rewrite_fptr rewriter, int *has_changes)
 			rel->l = rewrite_topdown(sql, rel->l, rewriter, has_changes);
 		break;
 
-  case op_multiplication:
-
-	case op_join: 
+	case op_join:
 	case op_left: 
 	case op_right: 
 	case op_full: 
@@ -7825,6 +7812,7 @@ rewrite_topdown(mvc *sql, sql_rel *rel, rewrite_fptr rewriter, int *has_changes)
 		rel->l = rewrite_topdown(sql, rel->l, rewriter, has_changes);
 		rel->r = rewrite_topdown(sql, rel->r, rewriter, has_changes);
 		break;
+  case op_multiplication:
 	case op_project:
 	case op_select: 
 	case op_groupby: 
