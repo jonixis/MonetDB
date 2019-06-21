@@ -4,8 +4,8 @@ build
 # LSP compile commands
 compile_commands.json
 
-# CCLS cache
-.ccls-cache
+# LSP cache
+.lsp-cache
 
 # Emacs org files
 *.org
